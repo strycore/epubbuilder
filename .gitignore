@@ -25,6 +25,9 @@ lib64
 # Installer logs
 pip-log.txt
 
+# Ctags
+tags
+
 # Unit test / coverage reports
 .coverage
 .tox
