@@ -17,6 +17,7 @@ from genshi.template import TemplateLoader
 
 TEMPLATE_PATH = os.path.join(os.path.split(__file__)[0], "templates")
 
+
 class TocMapNode:
     """
     Represents a table of contents node,
@@ -106,7 +107,7 @@ class EpubBook:
         self.spine = []
         self.guide = {}
         self.toc_map_root = TocMapNode()
-        self.last_node_at_depth = {0 : self.toc_map_root}
+        self.last_node_at_depth = {0: self.toc_map_root}
 
     def set_title(self, title):
         """
@@ -120,7 +121,7 @@ class EpubBook:
         """
         self.lang = lang
 
-    def add_creator(self, name, role = 'aut'):
+    def add_creator(self, name, role='aut'):
         """
         adds a creator, default role is author
         """
@@ -148,32 +149,24 @@ class EpubBook:
         return tags
 
     def get_image_items(self):
-        """
-        Retrieve all image items added to the epub
-        """
-        return sorted(self.image_items.values(), key = lambda x : x.id)
+        """ Retrieve all image items added to the epub """
+        return sorted(self.image_items.values(), key=lambda x: x.id)
 
     def get_html_items(self):
-        """
-        Retrieve all html items added to the epub
-        """
-        return sorted(self.html_items.values(), key = lambda x : x.id)
+        """ Retrieve all html items added to the epub """
+        return sorted(self.html_items.values(), key=lambda x: x.id)
 
     def get_css_items(self):
-        """
-        Retrieve all css items added to the epub
-        """
-        return sorted(self.css_items.values(), key = lambda x : x.id)
+        """ Retrieve all css items added to the epub """
+        return sorted(self.css_items.values(), key=lambda x: x.id)
 
     def get_all_items(self):
-        """
-        Retrieve all items (image, html and css) added to the epub
-        """
+        """ Retrieve all items (image, html and css) added to the epub """
         return sorted(itertools.chain(
             self.image_items.values(),
             self.html_items.values(),
             self.css_items.values()),
-            key = lambda x : x.id)
+            key=lambda x: x.id)
 
     def add_image(self, src, dest_path):
         """
@@ -197,11 +190,11 @@ class EpubBook:
         Add an html image page
         """
         tmpl = self.loader.load('image.html')
-        stream = tmpl.generate(book = self, item = image_item)
+        stream = tmpl.generate(book=self, item=image_item)
         html = stream.render(
             'xhtml',
-            doctype = 'xhtml11',
-            drop_xml_decl = False)
+            doctype='xhtml11',
+            drop_xml_decl=False)
         return self.add_html('%s.html' % image_item.dest_path, html)
 
     def add_html(self, dest_path, html):
@@ -259,13 +252,13 @@ class EpubBook:
         if self.title_page.content:
             return
         tmpl = self.loader.load('title-page.html')
-        stream = tmpl.generate(book = self)
+        stream = tmpl.generate(book=self)
         self.title_page.content = stream.render(
             'xhtml',
-            doctype = 'xhtml11',
-            drop_xml_decl = False)
+            doctype='xhtml11',
+            drop_xml_decl=False)
 
-    def add_title_page(self, html = ''):
+    def add_title_page(self, html=''):
         """
         Add a title page to the epub
         """
@@ -280,9 +273,9 @@ class EpubBook:
         """
         assert self.toc_page
         tmpl = self.loader.load('toc.html')
-        stream = tmpl.generate(book = self)
+        stream = tmpl.generate(book=self)
         self.toc_page.content = stream.render(
-            'xhtml', doctype = 'xhtml11', drop_xml_decl = False)
+            'xhtml', doctype='xhtml11', drop_xml_decl=False)
 
     def add_toc_page(self):
         """
@@ -299,12 +292,12 @@ class EpubBook:
         """
         return sorted(self.spine)
 
-    def add_spine_item(self, item, linear = True, order = None):
+    def add_spine_item(self, item, linear=True, order=None):
         """
         Add an item to the spine
         """
         assert item.dest_path in self.html_items
-        if order == None:
+        if order is None:
             max_order = max(order for order, _, _ in self.spine)
             order = (max_order if self.spine else 0) + 1
         self.spine.append((order, item, linear))
@@ -313,7 +306,7 @@ class EpubBook:
         """
         get all the guide items
         """
-        return sorted(self.guide.values(), key = lambda x : x[2])
+        return sorted(self.guide.values(), key=lambda x: x[2])
 
     def add_guide_item(self, href, title, guide_type):
         """
@@ -334,14 +327,14 @@ class EpubBook:
         """
         return max(self.last_node_at_depth.keys())
 
-    def add_toc_map_node(self, href, title, parent = None):
+    def add_toc_map_node(self, href, title, parent=None):
         """
         Add a table of contents node
         """
         node = TocMapNode()
         node.href = href
         node.title = title
-        if parent == None:
+        if parent is None:
             parent = self.toc_map_root
         node.parent = parent
         parent.children.append(node)
@@ -359,7 +352,7 @@ class EpubBook:
         stream = tmpl.generate()
         zip_outout.writestr(
             os.path.join('META-INF', 'container.xml'),
-            stream.render('xml'), compress_type = zipfile.ZIP_DEFLATED)
+            stream.render('xml'), compress_type=zipfile.ZIP_DEFLATED)
 
     def __write_toc_ncx(self, zip_outout):
         """
@@ -367,18 +360,20 @@ class EpubBook:
         """
         self.toc_map_root.assign_play_order()
         tmpl = self.loader.load('toc.ncx')
-        stream = tmpl.generate(book = self)
+        stream = tmpl.generate(book=self)
         zip_outout.writestr(os.path.join('OEBPS', 'toc.ncx'),
-            stream.render('xml'), compress_type = zipfile.ZIP_DEFLATED)
+                            stream.render('xml'),
+                            compress_type=zipfile.ZIP_DEFLATED)
 
     def __write_content_opf(self, zip_outout):
         """
         Add the content opf xml to the zip
         """
         tmpl = self.loader.load('content.opf')
-        stream = tmpl.generate(book = self)
+        stream = tmpl.generate(book=self)
         zip_outout.writestr(os.path.join('OEBPS', 'content.opf'),
-            stream.render('xml'), compress_type = zipfile.ZIP_DEFLATED)
+                            stream.render('xml'),
+                            compress_type=zipfile.ZIP_DEFLATED)
 
     def __write_items(self, zip_outout):
         """
@@ -391,14 +386,14 @@ class EpubBook:
             zip_outout.writestr(
                 os.path.join('OEBPS', item.dest_path),
                 content,
-                compress_type = zipfile.ZIP_DEFLATED)
+                compress_type=zipfile.ZIP_DEFLATED)
 
     def __write_mime_type(self, zip_outout):
         """
         write the mime type to the zip
         """
         zip_outout.writestr('mimetype', 'application/epub+zip',
-            compress_type = zipfile.ZIP_STORED)
+                            compress_type=zipfile.ZIP_STORED)
 
     def create_book(self, filename):
         """
@@ -440,13 +435,13 @@ def test():
     book.set_title('Most Wanted Tips for Aspiring Young Pirates')
     book.add_creator('Monkey D Luffy')
     book.add_creator('Guybrush Threepwood')
-    book.add_meta('contributor', 'Smalltalk80', role = 'bkp')
-    book.add_meta('date', '2010', event = 'publication')
+    book.add_meta('contributor', 'Smalltalk80', role='bkp')
+    book.add_meta('date', '2010', event='publication')
 
     book.add_title_page()
     book.add_toc_page()
     image_path = os.path.join(os.path.split(__file__)[0],
-        "test-files/revenge.500x800.jpg")
+                              "test-files/revenge.500x800.jpg")
     with open(image_path) as _file:
         book.add_cover(_file)
 
@@ -465,9 +460,9 @@ def test():
     book.add_spine_item(item2)
 
     toc1 = book.add_toc_map_node(item1.dest_path, 'Chap 1')
-    toc11 = book.add_toc_map_node(item11.dest_path, 'Chap 1.1', parent = toc1)
-    book.add_toc_map_node(item111.dest_path, 'Chap 1.1.1', parent = toc11)
-    book.add_toc_map_node(item12.dest_path, 'Chap 1.2', parent = toc1)
+    toc11 = book.add_toc_map_node(item11.dest_path, 'Chap 1.1', parent=toc1)
+    book.add_toc_map_node(item111.dest_path, 'Chap 1.1.1', parent=toc11)
+    book.add_toc_map_node(item12.dest_path, 'Chap 1.2', parent=toc1)
     book.add_toc_map_node(item2.dest_path, 'Chap 2')
 
     # write to disk
@@ -477,7 +472,7 @@ def test():
         _file.write(stream.getvalue())
     # check its validity
     epubcheck_path = os.path.join(os.path.split(__file__)[0],
-        "epubcheck-3.0b5/epubcheck-3.0b5.jar")
+                                  "epubcheck-3.0b5/epubcheck-3.0b5.jar")
     subprocess.call(['java', '-jar', epubcheck_path, 'test.epub'])
 
 if __name__ == '__main__':
