@@ -3,14 +3,18 @@
 <head>
   <title>${item.dest_path}</title>
   <style type="text/css">
-div, img {
-	border: 0;
-	margin: 0;
-	padding: 0;
-}
+  @page {padding: 0pt; margin:0pt}
+  body { text-align: center; padding:0pt; margin: 0pt; }
+  div, img {
+	  border: 0;
+	  margin: 0;
+	  padding: 0;
+  }
   </style>
 </head>
 <body>
-  <div><img src="${item.dest_path}" alt="${item.dest_path}"/></div>
+  <div>
+    <img src="${item.dest_path}" alt="${item.dest_path}"/>
+  </div>
 </body>
 </html>
