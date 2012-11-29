@@ -142,7 +142,7 @@ class EpubBook:
             begintag = '<dc:%s' % metaname
             if metaattr:
                 for attrname, attrvalue in metaattr.iteritems():
-                    begintag += ' opf:%s="%s"' % (attrname, attrvalue)
+                    begintag += ' %s="%s"' % (attrname, attrvalue)
             begintag += '>'
             endtag = '</dc:%s>' % metaname
             tags.append((begintag, metavalue, endtag))
@@ -435,8 +435,8 @@ def test():
     book.set_title('Most Wanted Tips for Aspiring Young Pirates')
     book.add_creator('Monkey D Luffy')
     book.add_creator('Guybrush Threepwood')
-    book.add_meta('contributor', 'Smalltalk80', role='bkp')
-    book.add_meta('date', '2010', event='publication')
+    book.add_meta('contributor', 'Smalltalk80')
+    book.add_meta('date', '2010')
 
     book.add_title_page()
     book.add_toc_page()
