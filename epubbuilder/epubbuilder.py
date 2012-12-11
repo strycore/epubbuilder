@@ -6,6 +6,7 @@ Allows simple creation of epub files
 """
 
 import os
+import sys
 import uuid
 import imghdr
 import zipfile
@@ -16,6 +17,16 @@ import subprocess
 from genshi.template import TemplateLoader
 
 TEMPLATE_PATH = os.path.join(os.path.split(__file__)[0], "templates")
+
+PYTHON_VERSION = sys.version_info
+if PYTHON_VERSION.major == 2 and PYTHON_VERSION.minor < 7:
+    # Nasty monkey patch to add compress_type param to ZipFile
+    _zipfile_writestr = zipfile.writestr
+
+    def writestr(self, zinfo_or_arcname, bytes, compress_type=None):
+        _zipfile_writestr(self, zinfo_or_arcname, bytes)
+
+    zipfile.writestr = writestr
 
 
 class TocMapNode:
