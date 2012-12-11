@@ -21,12 +21,12 @@ TEMPLATE_PATH = os.path.join(os.path.split(__file__)[0], "templates")
 PYTHON_VERSION = sys.version_info
 if PYTHON_VERSION[0] == 2 and PYTHON_VERSION[1] < 7:
     # Nasty monkey patch to add compress_type param to ZipFile
-    _zipfile_writestr = zipfile.writestr
+    _zipfile_writestr = zipfile.ZipFile.writestr
 
     def writestr(self, zinfo_or_arcname, bytes, compress_type=None):
         _zipfile_writestr(self, zinfo_or_arcname, bytes)
 
-    zipfile.writestr = writestr
+    zipfile.ZipFile.writestr = writestr
 
 
 class TocMapNode:
