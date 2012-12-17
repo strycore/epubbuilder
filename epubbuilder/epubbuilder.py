@@ -394,10 +394,7 @@ class EpubBook:
         """
         for item in self.get_all_items():
             content = item.content
-            if not hasattr(item, 'mime_type'):
-                print "Item %s has no mime type" % item
-                continue
-            if not item.mime_type.startswith('image'):
+            if item.mime_type and not item.mime_type.startswith('image'):
                 content = content.encode('utf-8')
             zip_outout.writestr(
                 os.path.join('OEBPS', item.dest_path),
